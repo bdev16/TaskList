@@ -6,6 +6,6 @@
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public List<Task> Tasks { get; set; }
+        public ICollection<Task> Tasks { get; set; }
     }
 }
