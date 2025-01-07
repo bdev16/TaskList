@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TaskList.Model;
+using Task = TaskList.Model.Task;
 
 namespace TaskList.Data
 {
@@ -8,7 +10,7 @@ namespace TaskList.Data
         {
         }
 
+        public DbSet<User> Users { get; set; }
         public DbSet<Task> Tasks { get; set; }
-        
     }
 }
