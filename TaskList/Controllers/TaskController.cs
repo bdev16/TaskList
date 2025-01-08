@@ -24,5 +24,16 @@ namespace TaskList.Controllers
             }
             return Ok(tasks);
         }
+
+        [HttpGet("{id:int}")]
+        public ActionResult<Task> Get(int id)
+        {
+            var task = _context.Tasks.FirstOrDefault(task => task.Id == id);
+            if (task is null)
+            {
+                return NotFound("O Id informado não corresponde a nenhuma das tarefas cadastradas...");
+            }
+            return Ok(task);
+        }
     }
 }
