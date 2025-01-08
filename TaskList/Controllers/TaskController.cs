@@ -13,5 +13,16 @@ namespace TaskList.Controllers
         {
             _context = context;
         }
+
+        [HttpGet]
+        public ActionResult<IEnumerable<Task>> Get()
+        {
+            var tasks = _context.Tasks.ToList();
+            if (!tasks.Any())
+            {
+                return NotFound("Nenhuma tarefa foi criada até o momento...");
+            }
+            return Ok(tasks);
+        }
     }
 }
