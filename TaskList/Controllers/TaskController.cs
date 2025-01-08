@@ -25,7 +25,7 @@ namespace TaskList.Controllers
             return Ok(tasks);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name ="GetTask")]
         public ActionResult<Task> Get(int id)
         {
             var task = _context.Tasks.FirstOrDefault(task => task.Id == id);
@@ -35,5 +35,7 @@ namespace TaskList.Controllers
             }
             return Ok(task);
         }
+
+
     }
 }
