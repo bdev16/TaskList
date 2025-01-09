@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace TaskList.Model
 {
-    public class Task
+    public class Task : IValidatableObject
     {
         [Key]
         public int Id { get; set; }
@@ -19,5 +19,17 @@ namespace TaskList.Model
         public string Status { get; set; } = string.Empty;
         public int UserId { get; set; }
         public User User { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!string.IsNullOrEmpty(Status)) 
+            {
+                if (Status != "Pendente" || Status != "Concluida" || Status != "Não-Concluida")
+                {
+                    yield return new
+                        ValidationResult("O Status(Pendente; Concluida; Não-Concluida) informado não existe...", new[] { nameof(this.Status) });
+                }
+            }
+        }
     }
 }
