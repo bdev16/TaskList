@@ -15,6 +15,7 @@ namespace TaskList.Model
         [StringLength(80, ErrorMessage = "O Nome informado ultrapassa os limites de 80 caracteres...")]
         public string Name { get; set; } = string.Empty;
         [Required(ErrorMessage = "O Email não pode ser vazio...")]
+        [EmailAddress(ErrorMessage = "O Email não segue a estrutura correta...")]
         public string Email { get; set; } = string.Empty;
         [Required(ErrorMessage = "A senha não pode ser vazia...")]
         public string Password { get; set; } = string.Empty;
