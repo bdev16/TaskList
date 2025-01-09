@@ -13,12 +13,12 @@ namespace TaskList.Model
         [StringLength(300, ErrorMessage = "O texto informado ultrapassa os limites de 300 caracteres...")]
         public string Description { get; set; } = string.Empty;
         [Required(ErrorMessage = "A data não pode ser vazia...")]
+        [DataType(DataType.DateTime, ErrorMessage = "A Data informada não segue o formato 00/00/0000 00:00:00")]
         public DateTime Date { get; set; }
         [Required(ErrorMessage = "O Status deve ser definido...")]
-        [DataType(DataType.DateTime, ErrorMessage = "A Data informada não segue o formato 00/00/0000 00:00:00")]
         public string Status { get; set; } = string.Empty;
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
