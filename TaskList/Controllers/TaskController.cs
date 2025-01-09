@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskList.Data;
+using Task = TaskList.Model.Task;
 
 namespace TaskList.Controllers
 {
@@ -36,6 +37,21 @@ namespace TaskList.Controllers
             return Ok(task);
         }
 
+        [HttpPost]
+        public ActionResult Post(Task task)
+        {
 
+            if (task is null)
+            {
+                return BadRequest();
+            }
+
+            _context.Tasks.Add(task);
+            _context.SaveChanges();
+
+            return new CreatedAtRouteResult("GetTask", new { id = task.Id }, task);
+
+
+        }
     }
 }
