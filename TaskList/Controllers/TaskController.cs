@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TaskList.Data;
 using Task = TaskList.Model.Task;
 
@@ -51,7 +52,20 @@ namespace TaskList.Controllers
 
             return new CreatedAtRouteResult("GetTask", new { id = task.Id }, task);
 
+        }
 
+        [HttpPut("{id:int}")]
+        public ActionResult Put(int id,Task task) 
+        {
+            if (id != task.Id) 
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(task).State = EntityState.Modified;
+            _context.SaveChanges();
+
+            return Ok(task);
         }
     }
 }
