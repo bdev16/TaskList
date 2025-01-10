@@ -67,5 +67,20 @@ namespace TaskList.Controllers
 
             return Ok(task);
         }
+
+        [HttpDelete("{id:int}")]
+        public ActionResult Delete(int id) 
+        {
+            var task = _context.Tasks.FirstOrDefault(task => task.Id == id);
+            if (task is null)
+            {
+                return NotFound("Tarefa não encontrada...");
+            }
+
+            _context.Tasks.Remove(task);
+            _context.SaveChanges();
+
+            return Ok(task);
+        }
     }
 }
