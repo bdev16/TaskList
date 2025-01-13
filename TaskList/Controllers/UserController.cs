@@ -28,7 +28,7 @@ namespace TaskList.Controllers
             return Ok(users);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name = "GetUser")]
         public ActionResult<User> Get(int id)
         {
             var user = _context.Users.FirstOrDefault(user => user.Id == id);
