@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaskList.Data;
+using TaskList.Model;
 
 namespace TaskList.Controllers
 {
@@ -15,6 +16,15 @@ namespace TaskList.Controllers
             _context = context;
         }
 
-
+        [HttpGet]
+        public ActionResult<IEnumerable<User>> Get()
+        {
+            var users = _context.Users.ToList();
+            if (!users.Any())
+            {
+                return NotFound("Nenhuma tarefa foi criada até o momento...");
+            }
+            return Ok(users);
+        }
     }
 }
