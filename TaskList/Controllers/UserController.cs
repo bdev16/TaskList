@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TaskList.Data;
 using TaskList.Model;
 
@@ -36,6 +37,17 @@ namespace TaskList.Controllers
                 return NotFound("O Id informado não corresponde a nenhum dos usuarios cadastrados...");
             }
             return Ok(user);
+        }
+
+        [HttpGet("tasks")]
+        public ActionResult<IEnumerable<User>> GetUserTasks()
+        {
+            var userTasks = _context.Users.Include(user => user.Tasks).ToList();
+            if (!userTasks.Any())
+            {
+                return NotFound();
+            }
+            return Ok(userTasks);
         }
     }
 }
