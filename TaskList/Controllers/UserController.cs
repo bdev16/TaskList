@@ -78,5 +78,20 @@ namespace TaskList.Controllers
             return Ok(user);
         }
 
+        [HttpDelete("{id:int}")]
+        public ActionResult Delete(int id)
+        {
+            var user = _context.Users.FirstOrDefault(user => user.Id == id);
+            if (user == null)
+            {
+                return NotFound("Usuario não encontrado...");
+            }
+
+            _context.Users.Remove(user);
+            _context.SaveChanges();
+
+            return Ok(user);
+        }
+
     }
 }
