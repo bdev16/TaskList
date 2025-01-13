@@ -63,5 +63,20 @@ namespace TaskList.Controllers
 
             return new CreatedAtRouteResult("GetUser", new { id = user.Id }, user);
         }
+
+        [HttpPut("{id:int}")]
+        public ActionResult<User> Put(int id, User user)
+        {
+            if (id != user.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(user).State = EntityState.Modified;
+            _context.SaveChanges();
+
+            return Ok(user);
+        }
+
     }
 }
