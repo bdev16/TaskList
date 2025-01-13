@@ -26,5 +26,16 @@ namespace TaskList.Controllers
             }
             return Ok(users);
         }
+
+        [HttpGet("{id:int}")]
+        public ActionResult<User> Get(int id)
+        {
+            var user = _context.Users.FirstOrDefault(user => user.Id == id);
+            if (user == null)
+            {
+                return NotFound("O Id informado não corresponde a nenhum dos usuarios cadastrados...");
+            }
+            return Ok(user);
+        }
     }
 }
