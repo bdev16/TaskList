@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 
 namespace TaskList.Model
 {
@@ -17,6 +18,7 @@ namespace TaskList.Model
         public DateTime Date { get; set; }
         public int Status { get; set; } = (int)StatusTaskEnum.Pending;
         public int UserId { get; set; }
+        [JsonIgnore]
         public User? User { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
