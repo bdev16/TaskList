@@ -20,7 +20,7 @@ namespace TaskList.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<User>> Get()
         {
-            var users = _context.Users.ToList();
+            var users = _context.Users.AsNoTracking().ToList();
             if (!users.Any())
             {
                 return NotFound("Nenhuma tarefa foi criada até o momento...");
@@ -31,7 +31,7 @@ namespace TaskList.Controllers
         [HttpGet("{id:int}", Name = "GetUser")]
         public ActionResult<User> Get(int id)
         {
-            var user = _context.Users.FirstOrDefault(user => user.Id == id);
+            var user = _context.Users.AsNoTracking().FirstOrDefault(user => user.Id == id);
             if (user == null)
             {
                 return NotFound("O Id informado não corresponde a nenhum dos usuarios cadastrados...");
@@ -42,7 +42,7 @@ namespace TaskList.Controllers
         [HttpGet("tasks")]
         public ActionResult<IEnumerable<User>> GetUserTasks()
         {
-            var userTasks = _context.Users.Include(user => user.Tasks).ToList();
+            var userTasks = _context.Users.AsNoTracking().Include(user => user.Tasks).ToList();
             if (!userTasks.Any())
             {
                 return NotFound();
