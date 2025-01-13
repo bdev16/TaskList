@@ -49,5 +49,19 @@ namespace TaskList.Controllers
             }
             return Ok(userTasks);
         }
+
+        [HttpPost()]
+        public ActionResult<User> Post(User user)
+        {
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            return new CreatedAtRouteResult("GetUser", new { id = user.Id }, user);
+        }
     }
 }
