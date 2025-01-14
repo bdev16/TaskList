@@ -19,68 +19,101 @@ namespace TaskList.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Task>> Get()
         {
-            var tasks = _context.Tasks.AsNoTracking().ToList();
-            if (!tasks.Any())
+            try
             {
-                return NotFound("Nenhuma tarefa foi criada até o momento...");
+                var tasks = _context.Tasks.AsNoTracking().ToList();
+                if (!tasks.Any())
+                {
+                    return NotFound("Nenhuma tarefa foi criada até o momento...");
+                }
+                return Ok(tasks);
             }
-            return Ok(tasks);
+            catch (Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+            }
         }
 
         [HttpGet("{id:int}", Name ="GetTask")]
         public ActionResult<Task> Get(int id)
         {
-            var task = _context.Tasks.AsNoTracking().FirstOrDefault(task => task.Id == id);
-            if (task is null)
+            try
             {
-                return NotFound("O Id informado não corresponde a nenhuma das tarefas cadastradas...");
+                var task = _context.Tasks.AsNoTracking().FirstOrDefault(task => task.Id == id);
+                if (task is null)
+                {
+                    return NotFound("O Id informado não corresponde a nenhuma das tarefas cadastradas...");
+                }
+                return Ok(task);
             }
-            return Ok(task);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+            }
         }
 
         [HttpPost]
         public ActionResult Post(Task task)
         {
-
-            if (task is null)
+            try
             {
-                return BadRequest();
+                if (task is null)
+                {
+                    return BadRequest();
+                }
+
+                _context.Tasks.Add(task);
+                _context.SaveChanges();
+
+                return new CreatedAtRouteResult("GetTask", new { id = task.Id }, task);
             }
-
-            _context.Tasks.Add(task);
-            _context.SaveChanges();
-
-            return new CreatedAtRouteResult("GetTask", new { id = task.Id }, task);
-
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+            }
         }
 
         [HttpPut("{id:int}")]
         public ActionResult Put(int id,Task task) 
         {
-            if (id != task.Id) 
+            try
             {
-                return BadRequest();
+                if (id != task.Id)
+                {
+                    return BadRequest();
+                }
+
+                _context.Entry(task).State = EntityState.Modified;
+                _context.SaveChanges();
+
+                return Ok(task);
             }
-
-            _context.Entry(task).State = EntityState.Modified;
-            _context.SaveChanges();
-
-            return Ok(task);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+            }
         }
 
         [HttpDelete("{id:int}")]
         public ActionResult Delete(int id) 
         {
-            var task = _context.Tasks.FirstOrDefault(task => task.Id == id);
-            if (task is null)
+            try
             {
-                return NotFound("Tarefa não encontrada...");
+                var task = _context.Tasks.FirstOrDefault(task => task.Id == id);
+                if (task is null)
+                {
+                    return NotFound("Tarefa não encontrada...");
+                }
+
+                _context.Tasks.Remove(task);
+                _context.SaveChanges();
+
+                return Ok(task);
             }
-
-            _context.Tasks.Remove(task);
-            _context.SaveChanges();
-
-            return Ok(task);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+            }
         }
     }
 }
