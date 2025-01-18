@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskList.Data;
 using TaskList.Model;
+using TaskList.Repositories;
 
 namespace TaskList.Controllers
 {
@@ -10,11 +11,14 @@ namespace TaskList.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IRepository<User> _repository;
+        private readonly IUserRepository _userRepository;
 
-        public UserController(AppDbContext context)
+        public UserController(IRepository<User> repository, IUserRepository userRepository)
         {
-            _context = context;
+            _repository = repository;
+            _userRepository = userRepository;
+
         }
 
         [HttpGet]
@@ -22,7 +26,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var users = _context.Users.AsNoTracking().ToList();
+                var users =  _repository.GetAll();
                 if (!users.Any())
                 {
                     return NotFound("Nenhuma tarefa foi criada até o momento...");
@@ -40,7 +44,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var user = _context.Users.AsNoTracking().FirstOrDefault(user => user.Id == id);
+                var user = _repository.Get(user => user.Id == id);
                 if (user == null)
                 {
                     return NotFound("O Id informado não corresponde a nenhum dos usuarios cadastrados...");
@@ -54,11 +58,11 @@ namespace TaskList.Controllers
         }
 
         [HttpGet("tasks")]
-        public ActionResult<IEnumerable<User>> GetUserTasks()
+        public async Task<ActionResult<IEnumerable<User>>> GetUserTasks()
         {
             try
             {
-                var userTasks = _context.Users.AsNoTracking().Include(user => user.Tasks).ToList();
+                var userTasks = _userRepository.GetUserTasks();
                 if (!userTasks.Any())
                 {
                     return NotFound();
@@ -81,8 +85,7 @@ namespace TaskList.Controllers
                     return BadRequest();
                 }
 
-                _context.Users.Add(user);
-                _context.SaveChanges();
+                _repository.Create(user);
 
                 return new CreatedAtRouteResult("GetUser", new { id = user.Id }, user);
             }
@@ -102,8 +105,7 @@ namespace TaskList.Controllers
                     return BadRequest();
                 }
 
-                _context.Entry(user).State = EntityState.Modified;
-                _context.SaveChanges();
+                _repository.Update(user);
 
                 return Ok(user);
             }
@@ -118,14 +120,13 @@ namespace TaskList.Controllers
         {
             try
             {
-                var user = _context.Users.FirstOrDefault(user => user.Id == id);
+                var user = _repository.Get(user => user.Id == id);
                 if (user == null)
                 {
                     return NotFound("Usuario não encontrado...");
                 }
 
-                _context.Users.Remove(user);
-                _context.SaveChanges();
+                _repository.Delete(user);
 
                 return Ok(user);
             }

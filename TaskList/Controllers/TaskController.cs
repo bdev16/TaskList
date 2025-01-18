@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskList.Data;
+using TaskList.Repositories;
 using Task = TaskList.Model.Task;
 
 namespace TaskList.Controllers
@@ -10,10 +11,10 @@ namespace TaskList.Controllers
     [ApiController]
     public class TaskController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public TaskController(AppDbContext context)
+        private readonly IRepository<Task> _repository;
+        public TaskController(IRepository<Task> repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         [HttpGet]
@@ -21,7 +22,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var tasks = _context.Tasks.AsNoTracking().ToList();
+                var tasks =  _repository.GetAll();
                 if (!tasks.Any())
                 {
                     return NotFound("Nenhuma tarefa foi criada até o momento...");
@@ -39,7 +40,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var task = _context.Tasks.AsNoTracking().FirstOrDefault(task => task.Id == id);
+                var task = _repository.Get(task => task.Id == id);
                 if (task is null)
                 {
                     return NotFound("O Id informado não corresponde a nenhuma das tarefas cadastradas...");
@@ -62,8 +63,7 @@ namespace TaskList.Controllers
                     return BadRequest();
                 }
 
-                _context.Tasks.Add(task);
-                _context.SaveChanges();
+                _repository.Create(task);
 
                 return new CreatedAtRouteResult("GetTask", new { id = task.Id }, task);
             }
@@ -83,8 +83,7 @@ namespace TaskList.Controllers
                     return BadRequest();
                 }
 
-                _context.Entry(task).State = EntityState.Modified;
-                _context.SaveChanges();
+                _repository.Update(task);
 
                 return Ok(task);
             }
@@ -99,14 +98,13 @@ namespace TaskList.Controllers
         {
             try
             {
-                var task = _context.Tasks.FirstOrDefault(task => task.Id == id);
+                var task = _repository.Get(task => task.Id == id);
                 if (task is null)
                 {
                     return NotFound("Tarefa não encontrada...");
                 }
 
-                _context.Tasks.Remove(task);
-                _context.SaveChanges();
+                _repository.Delete(task);
 
                 return Ok(task);
             }
