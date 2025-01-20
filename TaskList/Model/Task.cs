@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
@@ -8,9 +9,12 @@ namespace TaskList.Model
     {
         [Key]
         public int Id { get; set; }
+
         [Required(ErrorMessage = "O Titulo não pode ser vazio...")]
+        [Column(TypeName = "varchar(100)")]
         [StringLength(100, ErrorMessage = "O titulo informado ultrapassa os limites de 100 caracteres...")]
         public string Title { get; set; } = string.Empty;
+        [Column(TypeName = "varchar(300)")]
         [StringLength(300, ErrorMessage = "O texto informado ultrapassa os limites de 300 caracteres...")]
         public string Description { get; set; } = string.Empty;
         [Required(ErrorMessage = "A data não pode ser vazia...")]
