@@ -13,6 +13,18 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault;
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+var OrigensComAcessoPermitido = "_origensComAcessoPermitido";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: OrigensComAcessoPermitido,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:4200")
+                          .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                      });
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -40,6 +52,8 @@ app.UseSwaggerUI();
 //}
 
 //app.UseHttpsRedirection();
+
+app.UseCors(OrigensComAcessoPermitido);
 
 app.UseAuthorization();
 
