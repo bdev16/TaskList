@@ -1,7 +1,14 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using System.Text.Json.Serialization;
 using TaskList.Data;
+using TaskList.Model;
 using TaskList.Repositories;
+using TaskList.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +33,43 @@ builder.Services.AddCors(options =>
                       });
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "tasklist", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Bearer JWT",
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
+builder.Services.AddIdentity<User, IdentityRole>().
+    AddEntityFrameworkStores<AppDbContext>().
+    AddDefaultTokenProviders();
+
+builder.Services.AddAuthorization();
+//builder.Services.AddAuthentication("Bearer").AddJwtBearer();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -34,7 +77,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"));
 });
 
-<<<<<<< HEAD
 var secretKey = builder.Configuration["JWT:SecretKey"]
                    ?? throw new ArgumentException("Invalid secret key!!");
 
@@ -60,10 +102,9 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
-=======
->>>>>>> parent of 7163940 (feat(Global): Mudando o banco de dados utilizado; Adicionando sistema de autorização e autenticação com o JWT e Idendity)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 

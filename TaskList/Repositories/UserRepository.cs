@@ -2,7 +2,6 @@
 using TaskList.Data;
 using TaskList.Model;
 using TaskList.Repositories;
-using Task = TaskList.Model.Task;
 
 namespace TaskList.Repositories
 {
