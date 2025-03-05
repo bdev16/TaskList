@@ -28,7 +28,7 @@ namespace TaskList.Model
         public string UserId { get; set; }
         [JsonIgnore]
         public User? User { get; set; }
-        public ICollection<TaskDate> Dates { get; set; }
+        public virtual ICollection<TaskDate> Dates { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

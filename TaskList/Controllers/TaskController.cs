@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskList.Data;
+using TaskList.Model;
 using TaskList.Repositories;
 using Task = TaskList.Model.Task;
 
@@ -13,12 +14,14 @@ namespace TaskList.Controllers
     public class TaskController : ControllerBase
     {
         private readonly IRepository<Task> _repository;
-        public TaskController(IRepository<Task> repository)
+        private readonly ITaskRepository _taskRepository;
+        public TaskController(IRepository<Task> repository, ITaskRepository taskRepository)
         {
             _repository = repository;
+            _taskRepository = taskRepository;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public ActionResult<IEnumerable<Task>> Get()
         {
@@ -48,6 +51,25 @@ namespace TaskList.Controllers
                     return NotFound("O Id informado não corresponde a nenhuma das tarefas cadastradas...");
                 }
                 return Ok(task);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+            }
+        }
+
+        //[Authorize]
+        [HttpGet("dates")]
+        public async Task<ActionResult<IEnumerable<Task>>> GetDateTasks()
+        {
+            try
+            {
+                var dateTasks = _taskRepository.GetDateTasks();
+                if (!dateTasks.Any())
+                {
+                    return NotFound();
+                }
+                return Ok(dateTasks);
             }
             catch (Exception ex)
             {

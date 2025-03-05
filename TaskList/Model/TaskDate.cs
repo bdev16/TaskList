@@ -10,6 +10,6 @@ namespace TaskList.Model
         public int TaskId { get; set; }
         public DateTime Data { get; set; }
         [JsonIgnore]
-        public Task Task { get; set; }
+        public Task? Task { get; set; }
     }
 }

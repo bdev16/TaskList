@@ -58,7 +58,7 @@ namespace TaskList.Controllers
             }
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("tasks")]
         public async Task<ActionResult<IEnumerable<User>>> GetUserTasks()
         {
