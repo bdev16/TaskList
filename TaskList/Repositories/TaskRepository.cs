@@ -11,9 +11,5 @@ namespace TaskList.Repositories
         {
         }
 
-        public IEnumerable<Task> GetDateTasks()
-        {
-            return (IEnumerable<Task>)_context.Tasks.AsNoTracking().Include(task => task.Dates).ToList();
-        }    
     }
 }

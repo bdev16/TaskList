@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskList.Data;
@@ -11,9 +12,11 @@ using TaskList.Data;
 namespace TaskList.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250120003553_ImplementingBDToPostgres")]
+    partial class ImplementingBDToPostgres
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +32,9 @@ namespace TaskList.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -51,27 +57,6 @@ namespace TaskList.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Tasks");
-                });
-
-            modelBuilder.Entity("TaskList.Model.TaskDate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Data")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("TaskId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TaskId");
-
-                    b.ToTable("Dates");
                 });
 
             modelBuilder.Entity("TaskList.Model.User", b =>
@@ -109,22 +94,6 @@ namespace TaskList.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TaskList.Model.TaskDate", b =>
-                {
-                    b.HasOne("TaskList.Model.Task", "Task")
-                        .WithMany("Dates")
-                        .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Task");
-                });
-
-            modelBuilder.Entity("TaskList.Model.Task", b =>
-                {
-                    b.Navigation("Dates");
                 });
 
             modelBuilder.Entity("TaskList.Model.User", b =>

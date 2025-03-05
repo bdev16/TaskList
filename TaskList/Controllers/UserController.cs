@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskList.Data;
@@ -27,7 +26,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var users = _repository.GetAll();
+                var users =  _repository.GetAll();
                 if (!users.Any())
                 {
                     return NotFound("Nenhuma tarefa foi criada até o momento...");
@@ -37,7 +36,7 @@ namespace TaskList.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
-            }
+            }    
         }
 
         [HttpGet("{id:int}", Name = "GetUser")]
@@ -45,7 +44,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var user = _repository.Get(user => int.Parse(user.Id) == id);
+                var user = _repository.Get(user => user.Id == id);
                 if (user == null)
                 {
                     return NotFound("O Id informado não corresponde a nenhum dos usuarios cadastrados...");
@@ -94,7 +93,7 @@ namespace TaskList.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
-            }
+            }  
         }
 
         [HttpPut("{id:int}")]
@@ -102,7 +101,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                if (id != int.Parse(user.Id))
+                if (id != user.Id)
                 {
                     return BadRequest();
                 }
@@ -114,7 +113,7 @@ namespace TaskList.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
-            }
+            } 
         }
 
         [HttpDelete("{id:int}")]
@@ -122,7 +121,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var user = _repository.Get(user => int.Parse(user.Id) == id);
+                var user = _repository.Get(user => user.Id == id);
                 if (user == null)
                 {
                     return NotFound("Usuario não encontrado...");
@@ -135,7 +134,7 @@ namespace TaskList.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
-            }
+            }   
         }
 
     }
