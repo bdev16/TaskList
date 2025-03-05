@@ -13,6 +13,7 @@ namespace TaskList.Data
 
         //public DbSet<User> Users { get; set; }
         public DbSet<Task> Tasks { get; set; }
+        public DbSet<TaskDate> Dates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
