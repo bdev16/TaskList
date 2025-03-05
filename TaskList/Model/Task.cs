@@ -8,10 +8,6 @@ namespace TaskList.Model
 {
     public class Task : IValidatableObject
     {
-        public Task () 
-        {
-            Dates = new Collection<TaskDate>();
-        }
         [Key]
         public int Id { get; set; }
 
@@ -24,11 +20,11 @@ namespace TaskList.Model
         public string Description { get; set; } = string.Empty;
         [Required(ErrorMessage = "A data não pode ser vazia...")]
         [DataType(DataType.DateTime, ErrorMessage = "A Data informada não segue o formato 00/00/0000 00:00:00")]
+        public DateTime Date { get; set; }
         public int Status { get; set; } = (int)StatusTaskEnum.Pending;
         public string UserId { get; set; }
         [JsonIgnore]
         public User? User { get; set; }
-        public virtual ICollection<TaskDate> Dates { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

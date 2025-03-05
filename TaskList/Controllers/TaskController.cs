@@ -58,25 +58,6 @@ namespace TaskList.Controllers
             }
         }
 
-        //[Authorize]
-        [HttpGet("dates")]
-        public async Task<ActionResult<IEnumerable<Task>>> GetDateTasks()
-        {
-            try
-            {
-                var dateTasks = _taskRepository.GetDateTasks();
-                if (!dateTasks.Any())
-                {
-                    return NotFound();
-                }
-                return Ok(dateTasks);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
-            }
-        }
-
         [HttpPost]
         public ActionResult Post(Task task)
         {
