@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskList.Data;
@@ -17,6 +18,7 @@ namespace TaskList.Controllers
             _repository = repository;
         }
 
+        [Authorize]
         [HttpGet]
         public ActionResult<IEnumerable<Task>> Get()
         {

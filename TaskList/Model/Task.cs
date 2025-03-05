@@ -21,7 +21,7 @@ namespace TaskList.Model
         [DataType(DataType.DateTime, ErrorMessage = "A Data informada não segue o formato 00/00/0000 00:00:00")]
         public DateTime Date { get; set; }
         public int Status { get; set; } = (int)StatusTaskEnum.Pending;
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         [JsonIgnore]
         public User? User { get; set; }
 
