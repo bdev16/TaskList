@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Threading.Tasks;
 using TaskList.Data;
 using TaskList.Model;
 using TaskList.Repositories;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Task = TaskList.Model.Task;
 
 namespace TaskList.Controllers
@@ -51,6 +54,28 @@ namespace TaskList.Controllers
                     return NotFound("O Id informado não corresponde a nenhuma das tarefas cadastradas...");
                 }
                 return Ok(task);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+            }
+        }
+
+        [HttpGet("{id},{date}", Name = "GetTasksForDate")]
+        public ActionResult<Task> GetTasksForDate(string id, DateTime date)
+        {
+            try
+            {
+                var dateConverted = date.ToString("yyyy-MM-dd HH:mm:ss");
+
+                var tasks = _taskRepository.GetTasksForDate(id,dateConverted);
+
+                if (!tasks.Any())
+                {
+                    return NotFound("Não existe nenhum tarefa cadastrada com a data informada...");
+                }
+
+                return Ok(tasks);
             }
             catch (Exception ex)
             {
