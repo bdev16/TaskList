@@ -9,6 +9,11 @@ namespace TaskList.Repositories
     {
         public TaskRepository(AppDbContext context) : base(context)
         {
-        } 
+        }
+
+        public IEnumerable<Task> GetTasksForDate(string id, string date)
+        {
+            return _context.Tasks.AsNoTracking().Where(task => task.UserId == id && task.Date == date).ToList();
+        }
     }
 }
