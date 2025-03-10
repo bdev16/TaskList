@@ -19,8 +19,8 @@ namespace TaskList.Model
         [StringLength(300, ErrorMessage = "O texto informado ultrapassa os limites de 300 caracteres...")]
         public string Description { get; set; } = string.Empty;
         [Required(ErrorMessage = "A data não pode ser vazia...")]
-        [DataType(DataType.DateTime, ErrorMessage = "A Data informada não segue o formato 00/00/0000 00:00:00")]
-        public DateTime Date { get; set; }
+        //[DataType(DataType.DateTime, ErrorMessage = "A Data informada não segue o formato 00/00/0000 00:00:00")]
+        public string Date { get; set; }
         public int Status { get; set; } = (int)StatusTaskEnum.Pending;
         public string UserId { get; set; }
         [JsonIgnore]
