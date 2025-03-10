@@ -5,5 +5,6 @@ namespace TaskList.Repositories
 {
     public interface ITaskRepository : IRepository<Task>  
     {
+        IEnumerable<Task> GetTasksForDate(string id, string date);
     }
 }
