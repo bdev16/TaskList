@@ -9,7 +9,7 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["TaskList.csproj", "./"]
+COPY ["TaskList/TaskList.csproj", "TaskList/"]
 RUN dotnet restore "./TaskList/TaskList.csproj"
 COPY . .
 WORKDIR "/src/TaskList"
