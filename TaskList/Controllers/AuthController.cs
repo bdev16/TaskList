@@ -63,13 +63,15 @@ namespace TaskList.Controllers
 
                 user.RefreshToken = refreshToken;
 
+
                 await _userManager.UpdateAsync(user);
 
                 return Ok(new
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     RefreshToken = refreshToken,
-                    Expiration = token.ValidTo
+                    Expiration = token.ValidTo,
+                    UserId = user.Id,
                 });
             }
             return Unauthorized();
