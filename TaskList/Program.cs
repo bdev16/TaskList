@@ -73,8 +73,8 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    //options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection"));
 });
 
 var secretKey = builder.Configuration["JWT:SecretKey"]
