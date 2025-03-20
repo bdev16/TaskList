@@ -61,14 +61,13 @@ namespace TaskList.Controllers
             }
         }
 
-        [HttpGet("{id},{date}", Name = "GetTasksForDate")]
-        public ActionResult<Task> GetTasksForDate(string id, DateTime date)
+        [HttpGet("{id:string},{date: string}", Name = "GetTasksForDate")]
+        public ActionResult<Task> GetTasksForDate(string id, string date)
         {
             try
             {
-                var dateConverted = date.ToString("yyyy-MM-dd HH:mm:ss");
 
-                var tasks = _taskRepository.GetTasksForDate(id,dateConverted);
+                var tasks = _taskRepository.GetTasksForDate(id,date);
 
                 if (!tasks.Any())
                 {
