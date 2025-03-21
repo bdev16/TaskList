@@ -28,8 +28,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: OrigensComAcessoPermitido,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:4200/", "https://tasklist-jet.vercel.app")
-                          .AllowAnyHeader().AllowAnyMethod();
+                          policy.WithOrigins("http://localhost:4200", "https://tasklist-jet.vercel.app")
+                          .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                       });
 });
 builder.Services.AddEndpointsApiExplorer();
