@@ -124,6 +124,8 @@ app.UseSwaggerUI();
 
 app.UseCors(OrigensComAcessoPermitido);
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapControllers();
