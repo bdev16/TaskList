@@ -61,7 +61,7 @@ namespace TaskList.Controllers
             }
         }
 
-        [HttpGet("{id:string},{date: string}", Name = "GetTasksForDate")]
+        [HttpGet("{id},{date}", Name = "GetTasksForDate")]
         public ActionResult<Task> GetTasksForDate(string id, string date)
         {
             try
