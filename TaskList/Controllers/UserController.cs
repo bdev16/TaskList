@@ -40,12 +40,12 @@ namespace TaskList.Controllers
             }
         }
 
-        [HttpGet("{id:int}", Name = "GetUser")]
-        public ActionResult<User> Get(int id)
+        [HttpGet("{id}", Name = "GetUser")]
+        public ActionResult<User> Get(string id)
         {
             try
             {
-                var user = _repository.Get(user => int.Parse(user.Id) == id);
+                var user = _repository.Get(user => user.Id == id);
                 if (user == null)
                 {
                     return NotFound("O Id informado não corresponde a nenhum dos usuarios cadastrados...");
