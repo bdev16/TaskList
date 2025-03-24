@@ -99,7 +99,7 @@ namespace TaskList.Controllers
             }
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id}")]
         public ActionResult<User> Put(string id, UserUpdateDTO userUpdate)
         {
             try
