@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskList.Data;
+using TaskList.DTOs;
 using TaskList.Model;
 using TaskList.Repositories;
+using TaskList.DTOs;
 
 namespace TaskList.Controllers
 {
@@ -98,14 +100,21 @@ namespace TaskList.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult<User> Put(int id, User user)
+        public ActionResult<User> Put(string id, UserUpdateDTO userUpdate)
         {
             try
             {
-                if (id != int.Parse(user.Id))
+                var user = _repository.Get(user => user.Id == id);
+                if (user == null)
                 {
-                    return BadRequest();
+                    return NotFound("O Id informado não corresponde a nenhum dos usuarios cadastrados...");
                 }
+
+                if (!string.IsNullOrEmpty(userUpdate.UserName))
+                    user.UserName = userUpdate.UserName;
+
+                if (!string.IsNullOrEmpty(userUpdate.Email))
+                    user.Email = userUpdate.Email;
 
                 _repository.Update(user);
 
