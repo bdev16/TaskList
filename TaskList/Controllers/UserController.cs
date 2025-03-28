@@ -126,12 +126,12 @@ namespace TaskList.Controllers
             }
         }
 
-        [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        [HttpDelete("{id}")]
+        public ActionResult Delete(string id)
         {
             try
             {
-                var user = _repository.Get(user => int.Parse(user.Id) == id);
+                var user = _repository.Get(user => user.Id == id);
                 if (user == null)
                 {
                     return NotFound("Usuario não encontrado...");
