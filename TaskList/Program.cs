@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: OrigensComAcessoPermitido,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:4200", "https://front-tasklist.vercel.app/", "https://tasklist-0nib.onrender.com/")
+                          policy.WithOrigins("http://localhost:4200", "https://front-tasklist.vercel.app")
                           .AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                       });
 });
