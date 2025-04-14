@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Threading.Tasks;
 using TaskList.Data;
+using TaskList.DTOs;
 using TaskList.Model;
 using TaskList.Repositories;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -16,11 +17,9 @@ namespace TaskList.Controllers
     [ApiController]
     public class TaskController : ControllerBase
     {
-        private readonly IRepository<Task> _repository;
         private readonly ITaskRepository _taskRepository;
-        public TaskController(IRepository<Task> repository, ITaskRepository taskRepository)
+        public TaskController(ITaskRepository taskRepository)
         {
-            _repository = repository;
             _taskRepository = taskRepository;
         }
 
@@ -30,16 +29,17 @@ namespace TaskList.Controllers
         {
             try
             {
-                var tasks =  _repository.GetAll();
+                //var tasks =  _repository.GetAll();
+                var tasks = _taskRepository.GetAll();
                 if (!tasks.Any())
                 {
-                    return NotFound("Nenhuma tarefa foi criada até o momento...");
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Nenhuma tarefa foi criada até o momento..."});
                 }
                 return Ok(tasks);
             }
             catch (Exception ex) 
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
@@ -48,16 +48,16 @@ namespace TaskList.Controllers
         {
             try
             {
-                var task = _repository.Get(task => task.Id == id);
+                var task = _taskRepository.Get(task => task.Id == id);
                 if (task is null)
                 {
-                    return NotFound("O Id informado não corresponde a nenhuma das tarefas cadastradas...");
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhuma das tarefas cadastradas..."});
                 }
                 return Ok(task);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
@@ -71,14 +71,14 @@ namespace TaskList.Controllers
 
                 if (!tasks.Any())
                 {
-                    return NotFound("Não existe nenhum tarefa cadastrada com a data informada...");
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Não existe nenhum tarefa cadastrada com a data informada..."});
                 }
 
                 return Ok(tasks);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
@@ -92,13 +92,13 @@ namespace TaskList.Controllers
                     return BadRequest();
                 }
 
-                _repository.Create(task);
+                _taskRepository.Create(task);
 
                 return new CreatedAtRouteResult("GetTask", new { id = task.Id }, task);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
@@ -109,16 +109,16 @@ namespace TaskList.Controllers
             {
                 if (id != task.Id)
                 {
-                    return BadRequest();
+                    return StatusCode(StatusCodes.Status400BadRequest, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhuma das tarefas cadastradas..."});
                 }
 
-                _repository.Update(task);
+                _taskRepository.Update(task);
 
                 return Ok(task);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
@@ -127,10 +127,10 @@ namespace TaskList.Controllers
         {
             try
             {
-                var task = _repository.Get(task => task.Id == id);
+                var task = _taskRepository.Get(task => task.Id == id);
                 if (task is null)
                 {
-                    return NotFound("Tarefa não encontrada...");
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Tarefa não encontrada..."});
                 }
 
                 _repository.Delete(task);
@@ -139,7 +139,7 @@ namespace TaskList.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
     }
