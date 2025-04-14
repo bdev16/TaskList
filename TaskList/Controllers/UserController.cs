@@ -14,12 +14,10 @@ namespace TaskList.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IRepository<User> _repository;
         private readonly IUserRepository _userRepository;
 
-        public UserController(IRepository<User> repository, IUserRepository userRepository)
+        public UserController(IUserRepository userRepository)
         {
-            _repository = repository;
             _userRepository = userRepository;
 
         }
@@ -29,16 +27,16 @@ namespace TaskList.Controllers
         {
             try
             {
-                var users = _repository.GetAll();
+                var users = _userRepository.GetAll();
                 if (!users.Any())
                 {
-                    return NotFound("Nenhuma tarefa foi criada até o momento...");
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Nenhuma usuario foi criado até o momento..."});
                 }
                 return Ok(users);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
@@ -47,16 +45,16 @@ namespace TaskList.Controllers
         {
             try
             {
-                var user = _repository.Get(user => user.Id == id);
+                var user = _userRepository.Get(user => user.Id == id);
                 if (user == null)
                 {
-                    return NotFound("O Id informado não corresponde a nenhum dos usuarios cadastrados...");
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhum dos usuarios cadastrados..."});
                 }
                 return Ok(user);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
@@ -69,13 +67,13 @@ namespace TaskList.Controllers
                 var userTasks = _userRepository.GetUserTasks();
                 if (!userTasks.Any())
                 {
-                    return NotFound();
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "" });
                 }
                 return Ok(userTasks);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
@@ -89,13 +87,13 @@ namespace TaskList.Controllers
                     return BadRequest();
                 }
 
-                _repository.Create(user);
+                _userRepository.Create(user);
 
                 return new CreatedAtRouteResult("GetUser", new { id = user.Id }, user);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
@@ -104,10 +102,10 @@ namespace TaskList.Controllers
         {
             try
             {
-                var user = _repository.Get(user => user.Id == id);
+                var user = _userRepository.Get(user => user.Id == id);
                 if (user == null)
                 {
-                    return NotFound("O Id informado não corresponde a nenhum dos usuarios cadastrados...");
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhum dos usuarios cadastrados..."});
                 }
 
                 if (!string.IsNullOrEmpty(userUpdate.UserName))
@@ -122,7 +120,7 @@ namespace TaskList.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
@@ -134,16 +132,17 @@ namespace TaskList.Controllers
                 var user = _repository.Get(user => user.Id == id);
                 if (user == null)
                 {
-                    return NotFound("Usuario não encontrado...");
+                    return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Usuario não encontrado..."});
+
                 }
 
-                _repository.Delete(user);
+                _userRepository.Delete(user);
 
                 return Ok(user);
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Ocorreu um erro ao tentar tratar a sua solicitação...");
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
         }
 
