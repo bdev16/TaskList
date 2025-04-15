@@ -14,12 +14,11 @@ namespace TaskList.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnityOfWork _unityOfWork;
 
-        public UserController(IUserRepository userRepository)
+        public UserController(UnityOfWork unityOfWork)
         {
-            _userRepository = userRepository;
-
+            _unityOfWork = unityOfWork;
         }
 
         [HttpGet]
@@ -27,7 +26,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var users = _userRepository.GetAll();
+                var users = _unityOfWork.UserRepository.GetAll();
                 if (!users.Any())
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Nenhuma usuario foi criado até o momento..."});
@@ -45,7 +44,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var user = _userRepository.Get(user => user.Id == id);
+                var user = _unityOfWork.UserRepository.Get(user => user.Id == id);
                 if (user == null)
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhum dos usuarios cadastrados..."});
@@ -64,7 +63,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var userTasks = _userRepository.GetUserTasks();
+                var userTasks = _unityOfWork.UserRepository.GetUserTasks();
                 if (!userTasks.Any())
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "" });
@@ -87,7 +86,8 @@ namespace TaskList.Controllers
                     return BadRequest();
                 }
 
-                _userRepository.Create(user);
+                _unityOfWork.UserRepository.Create(user);
+                _unityOfWork.Commit();
 
                 return new CreatedAtRouteResult("GetUser", new { id = user.Id }, user);
             }
@@ -102,7 +102,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var user = _userRepository.Get(user => user.Id == id);
+                var user = _unityOfWork.UserRepository.Get(user => user.Id == id);
                 if (user == null)
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhum dos usuarios cadastrados..."});
@@ -114,7 +114,8 @@ namespace TaskList.Controllers
                 if (!string.IsNullOrEmpty(userUpdate.Email))
                     user.Email = userUpdate.Email;
 
-                _repository.Update(user);
+                _unityOfWork.UserRepository.Update(user);
+                _unityOfWork.Commit();
 
                 return Ok(user);
             }
@@ -129,14 +130,15 @@ namespace TaskList.Controllers
         {
             try
             {
-                var user = _repository.Get(user => user.Id == id);
+                var user = _unityOfWork.UserRepository.Get(user => user.Id == id);
                 if (user == null)
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Usuario não encontrado..."});
 
                 }
 
-                _userRepository.Delete(user);
+                _unityOfWork.UserRepository.Delete(user);
+                _unityOfWork.Commit();
 
                 return Ok(user);
             }
