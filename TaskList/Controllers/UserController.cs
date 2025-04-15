@@ -16,7 +16,7 @@ namespace TaskList.Controllers
     {
         private readonly IUnityOfWork _unityOfWork;
 
-        public UserController(UnityOfWork unityOfWork)
+        public UserController(IUnityOfWork unityOfWork)
         {
             _unityOfWork = unityOfWork;
         }
