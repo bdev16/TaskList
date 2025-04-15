@@ -18,7 +18,7 @@ namespace TaskList.Controllers
     public class TaskController : ControllerBase
     {
         private readonly IUnityOfWork _unityOfWork;
-        public TaskController(UnityOfWork unityOfWork)
+        public TaskController(IUnityOfWork unityOfWork)
         {
             _unityOfWork = unityOfWork;
         }
@@ -113,7 +113,6 @@ namespace TaskList.Controllers
                 }
 
                 _unityOfWork.TaskRepository.Update(task);
-
                 _unityOfWork.Commit();
 
                 return Ok(task);
