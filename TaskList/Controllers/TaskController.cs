@@ -17,10 +17,10 @@ namespace TaskList.Controllers
     [ApiController]
     public class TaskController : ControllerBase
     {
-        private readonly ITaskRepository _taskRepository;
-        public TaskController(ITaskRepository taskRepository)
+        private readonly IUnityOfWork _unityOfWork;
+        public TaskController(UnityOfWork unityOfWork)
         {
-            _taskRepository = taskRepository;
+            _unityOfWork = unityOfWork;
         }
 
         //[Authorize]
@@ -29,8 +29,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                //var tasks =  _repository.GetAll();
-                var tasks = _taskRepository.GetAll();
+                var tasks = _unityOfWork.TaskRepository.GetAll();
                 if (!tasks.Any())
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Nenhuma tarefa foi criada até o momento..."});
@@ -48,7 +47,7 @@ namespace TaskList.Controllers
         {
             try
             {
-                var task = _taskRepository.Get(task => task.Id == id);
+                var task = _unityOfWork.TaskRepository.Get(task => task.Id == id);
                 if (task is null)
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhuma das tarefas cadastradas..."});
@@ -67,7 +66,7 @@ namespace TaskList.Controllers
             try
             {
 
-                var tasks = _taskRepository.GetTasksForDate(id,date);
+                var tasks = _unityOfWork.TaskRepository.GetTasksForDate(id,date);
 
                 if (!tasks.Any())
                 {
@@ -92,7 +91,8 @@ namespace TaskList.Controllers
                     return BadRequest();
                 }
 
-                _taskRepository.Create(task);
+                _unityOfWork.TaskRepository.Create(task);
+                _unityOfWork.Commit();
 
                 return new CreatedAtRouteResult("GetTask", new { id = task.Id }, task);
             }
@@ -112,7 +112,9 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status400BadRequest, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhuma das tarefas cadastradas..."});
                 }
 
-                _taskRepository.Update(task);
+                _unityOfWork.TaskRepository.Update(task);
+
+                _unityOfWork.Commit();
 
                 return Ok(task);
             }
@@ -127,13 +129,14 @@ namespace TaskList.Controllers
         {
             try
             {
-                var task = _taskRepository.Get(task => task.Id == id);
+                var task = _unityOfWork.TaskRepository.Get(task => task.Id == id);
                 if (task is null)
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Tarefa não encontrada..."});
                 }
 
-                _repository.Delete(task);
+                _unityOfWork.TaskRepository.Delete(task);
+                _unityOfWork.Commit();
 
                 return Ok(task);
             }
