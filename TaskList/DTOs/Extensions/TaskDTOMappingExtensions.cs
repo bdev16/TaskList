@@ -6,7 +6,12 @@ namespace TaskList.DTOs.Extensions
     {
         public static TaskDTO ToTaskDTO(this Task task)
         {
-            TaskDTO taskDTO = new TaskDTO()
+            if (task is null)
+            {
+                return null;
+            }
+
+            return new TaskDTO()
             {
                 Id = task.Id,
                 Title = task.Title,
@@ -15,13 +20,16 @@ namespace TaskList.DTOs.Extensions
                 Status = task.Status,
                 UserId = task.UserId,
             };
-
-            return taskDTO;
         }
 
         public static Task ToTask(this TaskDTO taskDTO)
         {
-            Task task = new Task()
+            if (taskDTO is null)
+            {
+                return null;
+            }
+
+            return new Task()
             {
                 Id = taskDTO.Id,
                 Title = taskDTO.Title,
@@ -30,28 +38,24 @@ namespace TaskList.DTOs.Extensions
                 Status = taskDTO.Status,
                 UserId = taskDTO.UserId,
             };
-
-            return task;
         }
 
         public static IEnumerable<TaskDTO> ToTaskDTOList(this IEnumerable<Task> tasks)
         {
-            var tasksDTO = new List<TaskDTO>();
-            foreach (var task in tasks)
+            if (tasks is null || !tasks.Any())
             {
-                TaskDTO taskDTO = new TaskDTO()
-                {
-                    Id = task.Id,
-                    Title = task.Title,
-                    Description = task.Description,
-                    Date = task.Date,
-                    Status = task.Status,
-                    UserId = task.UserId,
-                };
-                tasksDTO.Add(taskDTO);
+                return new List<TaskDTO>();
             }
 
-            return tasksDTO;
+            return tasks.Select(task => new TaskDTO
+            {
+                Id = task.Id,
+                Title = task.Title,
+                Description = task.Description,
+                Date = task.Date,
+                Status = task.Status,
+                UserId = task.UserId,
+            }).ToList();
         }
     }
 }
