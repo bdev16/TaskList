@@ -34,7 +34,22 @@ namespace TaskList.Controllers
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Nenhuma tarefa foi criada até o momento..."});
                 }
-                return Ok(tasks);
+
+                var tasksDTO = new List<TaskDTO>();
+                foreach (var task in tasks)
+                {
+                    var taskDTO = new TaskDTO()
+                    {
+                        Id = task.Id,
+                        Title = task.Title,
+                        Description = task.Description,
+                        Date = task.Date,
+                        Status = task.Status,
+                        UserId = task.UserId
+                    };
+                }
+
+                return Ok(tasksDTO);
             }
             catch (Exception ex) 
             {
@@ -83,7 +98,21 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Não existe nenhum tarefa cadastrada com a data informada..."});
                 }
 
-                return Ok(tasks);
+                var tasksDTO = new List<TaskDTO>();
+                foreach (var task in tasks)
+                {
+                    var taskDTO = new TaskDTO()
+                    {
+                        Id = task.Id,
+                        Title = task.Title,
+                        Description = task.Description,
+                        Date = task.Date,
+                        Status = task.Status,
+                        UserId = task.UserId
+                    };
+                }
+
+                return Ok(tasksDTO);
             }
             catch (Exception ex)
             {
