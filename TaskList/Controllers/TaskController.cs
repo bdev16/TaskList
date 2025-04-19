@@ -25,7 +25,7 @@ namespace TaskList.Controllers
 
         //[Authorize]
         [HttpGet]
-        public ActionResult<IEnumerable<Task>> Get()
+        public ActionResult<IEnumerable<TaskDTO>> Get()
         {
             try
             {
@@ -43,7 +43,7 @@ namespace TaskList.Controllers
         }
 
         [HttpGet("{id:int}", Name ="GetTask")]
-        public ActionResult<Task> Get(int id)
+        public ActionResult<TaskDTO> Get(int id)
         {
             try
             {
@@ -52,7 +52,18 @@ namespace TaskList.Controllers
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhuma das tarefas cadastradas..."});
                 }
-                return Ok(task);
+
+                TaskDTO taskDTO = new TaskDTO() 
+                {
+                    Id = task.Id,
+                    Title = task.Title,
+                    Description = task.Description,
+                    Date = task.Date,
+                    Status = task.Status,
+                    UserId = task.UserId,
+                };
+
+                return Ok(taskDTO);
             }
             catch (Exception ex)
             {
@@ -61,11 +72,10 @@ namespace TaskList.Controllers
         }
 
         [HttpGet("{id},{date}", Name = "GetTasksForDate")]
-        public ActionResult<Task> GetTasksForDate(string id, string date)
+        public ActionResult<TaskDTO> GetTasksForDate(string id, string date)
         {
             try
             {
-
                 var tasks = _unityOfWork.TaskRepository.GetTasksForDate(id,date);
 
                 if (!tasks.Any())
@@ -82,19 +92,39 @@ namespace TaskList.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post(Task task)
+        public ActionResult<TaskDTO> Post(TaskDTO taskDTO)
         {
             try
             {
-                if (task is null)
+                if (taskDTO is null)
                 {
                     return BadRequest();
                 }
 
+                var task = new Task()
+                {
+                    Id = taskDTO.Id,
+                    Title = taskDTO.Title,
+                    Description = taskDTO.Description,
+                    Date = taskDTO.Date,
+                    Status = taskDTO.Status,
+                    UserId = taskDTO.UserId
+                };
+
                 _unityOfWork.TaskRepository.Create(task);
                 _unityOfWork.Commit();
 
-                return new CreatedAtRouteResult("GetTask", new { id = task.Id }, task);
+                TaskDTO newTaskDTO = new TaskDTO()
+                {
+                    Id = task.Id,
+                    Title = task.Title,
+                    Description = task.Description,
+                    Date = task.Date,
+                    Status = task.Status,
+                    UserId = task.UserId,
+                };
+
+                return Ok(newTaskDTO);
             }
             catch (Exception ex)
             {
@@ -103,19 +133,39 @@ namespace TaskList.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id,Task task) 
+        public ActionResult Put(int id, TaskDTO taskDTO) 
         {
             try
             {
-                if (id != task.Id)
+                if (id != taskDTO.Id)
                 {
                     return StatusCode(StatusCodes.Status400BadRequest, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhuma das tarefas cadastradas..."});
                 }
 
+                var task = new Task()
+                {
+                    Id = taskDTO.Id,
+                    Title = taskDTO.Title,
+                    Description = taskDTO.Description,
+                    Date = taskDTO.Date,
+                    Status = taskDTO.Status,
+                    UserId = taskDTO.UserId
+                };
+
                 _unityOfWork.TaskRepository.Update(task);
                 _unityOfWork.Commit();
 
-                return Ok(task);
+                TaskDTO updateTaskDTO = new TaskDTO()
+                {
+                    Id = task.Id,
+                    Title = task.Title,
+                    Description = task.Description,
+                    Date = task.Date,
+                    Status = task.Status,
+                    UserId = task.UserId,
+                };
+
+                return Ok(updateTaskDTO);
             }
             catch (Exception ex)
             {
@@ -134,10 +184,20 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Tarefa não encontrada..."});
                 }
 
-                _unityOfWork.TaskRepository.Delete(task);
+                var removedTask = _unityOfWork.TaskRepository.Delete(task);
                 _unityOfWork.Commit();
 
-                return Ok(task);
+                TaskDTO removedTaskDTO = new TaskDTO()
+                {
+                    Id = removedTask.Id,
+                    Title = removedTask.Title,
+                    Description = removedTask.Description,
+                    Date = removedTask.Date,
+                    Status = removedTask.Status,
+                    UserId = removedTask.UserId,
+                };
+
+                return Ok(removedTaskDTO);
             }
             catch (Exception ex)
             {
