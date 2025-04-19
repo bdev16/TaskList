@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using TaskList.Data;
 using TaskList.DTOs;
+using TaskList.DTOs.Extensions;
 using TaskList.Model;
 using TaskList.Repositories;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -35,19 +36,7 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Nenhuma tarefa foi criada até o momento..."});
                 }
 
-                var tasksDTO = new List<TaskDTO>();
-                foreach (var task in tasks)
-                {
-                    var taskDTO = new TaskDTO()
-                    {
-                        Id = task.Id,
-                        Title = task.Title,
-                        Description = task.Description,
-                        Date = task.Date,
-                        Status = task.Status,
-                        UserId = task.UserId
-                    };
-                }
+                var tasksDTO = TaskDTOMappingExtensions.ToTaskDTOList(tasks);
 
                 return Ok(tasksDTO);
             }
@@ -68,15 +57,7 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhuma das tarefas cadastradas..."});
                 }
 
-                TaskDTO taskDTO = new TaskDTO() 
-                {
-                    Id = task.Id,
-                    Title = task.Title,
-                    Description = task.Description,
-                    Date = task.Date,
-                    Status = task.Status,
-                    UserId = task.UserId,
-                };
+                var taskDTO = TaskDTOMappingExtensions.ToTaskDTO(task);
 
                 return Ok(taskDTO);
             }
@@ -98,19 +79,7 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Não existe nenhum tarefa cadastrada com a data informada..."});
                 }
 
-                var tasksDTO = new List<TaskDTO>();
-                foreach (var task in tasks)
-                {
-                    var taskDTO = new TaskDTO()
-                    {
-                        Id = task.Id,
-                        Title = task.Title,
-                        Description = task.Description,
-                        Date = task.Date,
-                        Status = task.Status,
-                        UserId = task.UserId
-                    };
-                }
+                var tasksDTO = TaskDTOMappingExtensions.ToTaskDTOList(tasks);
 
                 return Ok(tasksDTO);
             }
@@ -130,28 +99,12 @@ namespace TaskList.Controllers
                     return BadRequest();
                 }
 
-                var task = new Task()
-                {
-                    Id = taskDTO.Id,
-                    Title = taskDTO.Title,
-                    Description = taskDTO.Description,
-                    Date = taskDTO.Date,
-                    Status = taskDTO.Status,
-                    UserId = taskDTO.UserId
-                };
+                var task = TaskDTOMappingExtensions.ToTask(taskDTO);
 
                 _unityOfWork.TaskRepository.Create(task);
                 _unityOfWork.Commit();
 
-                TaskDTO newTaskDTO = new TaskDTO()
-                {
-                    Id = task.Id,
-                    Title = task.Title,
-                    Description = task.Description,
-                    Date = task.Date,
-                    Status = task.Status,
-                    UserId = task.UserId,
-                };
+                var newTaskDTO = TaskDTOMappingExtensions.ToTaskDTO(task);
 
                 return Ok(newTaskDTO);
             }
@@ -171,28 +124,12 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status400BadRequest, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhuma das tarefas cadastradas..."});
                 }
 
-                var task = new Task()
-                {
-                    Id = taskDTO.Id,
-                    Title = taskDTO.Title,
-                    Description = taskDTO.Description,
-                    Date = taskDTO.Date,
-                    Status = taskDTO.Status,
-                    UserId = taskDTO.UserId
-                };
+                var task = TaskDTOMappingExtensions.ToTask(taskDTO);
 
                 _unityOfWork.TaskRepository.Update(task);
                 _unityOfWork.Commit();
 
-                TaskDTO updateTaskDTO = new TaskDTO()
-                {
-                    Id = task.Id,
-                    Title = task.Title,
-                    Description = task.Description,
-                    Date = task.Date,
-                    Status = task.Status,
-                    UserId = task.UserId,
-                };
+                var updateTaskDTO = TaskDTOMappingExtensions.ToTaskDTO(task);
 
                 return Ok(updateTaskDTO);
             }
@@ -216,15 +153,7 @@ namespace TaskList.Controllers
                 var removedTask = _unityOfWork.TaskRepository.Delete(task);
                 _unityOfWork.Commit();
 
-                TaskDTO removedTaskDTO = new TaskDTO()
-                {
-                    Id = removedTask.Id,
-                    Title = removedTask.Title,
-                    Description = removedTask.Description,
-                    Date = removedTask.Date,
-                    Status = removedTask.Status,
-                    UserId = removedTask.UserId,
-                };
+                var removedTaskDTO = TaskDTOMappingExtensions.ToTaskDTO(task);
 
                 return Ok(removedTaskDTO);
             }
