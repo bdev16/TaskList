@@ -6,9 +6,12 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
 using TaskList.Data;
+using TaskList.DTOs;
+using TaskList.DTOs.Extensions;
 using TaskList.Model;
 using TaskList.Repositories;
 using TaskList.Services;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -107,8 +110,9 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnityOfWork, UnityOfWork>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-var app = builder.Build();
+builder.Services.AddAutoMapper(typeof(DTOMappingProfile));
 
+var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
