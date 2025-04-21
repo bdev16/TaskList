@@ -11,6 +11,7 @@ using TaskList.Model;
 using TaskList.Repositories;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Task = TaskList.Model.Task;
+using AutoMapper;
 
 namespace TaskList.Controllers
 {
@@ -19,6 +20,7 @@ namespace TaskList.Controllers
     public class TaskController : ControllerBase
     {
         private readonly IUnityOfWork _unityOfWork;
+        private readonly IMapper _mapper;
         public TaskController(IUnityOfWork unityOfWork)
         {
             _unityOfWork = unityOfWork;
@@ -36,7 +38,7 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Nenhuma tarefa foi criada até o momento..."});
                 }
 
-                var tasksDTO = TaskDTOMappingExtensions.ToTaskDTOList(tasks);
+                var tasksDTO = _mapper.Map<TaskDTO>(tasks);
 
                 return Ok(tasksDTO);
             }
@@ -57,7 +59,7 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhuma das tarefas cadastradas..."});
                 }
 
-                var taskDTO = TaskDTOMappingExtensions.ToTaskDTO(task);
+                var taskDTO = _mapper.Map<TaskDTO>(task);
 
                 return Ok(taskDTO);
             }
@@ -79,7 +81,7 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Não existe nenhum tarefa cadastrada com a data informada..."});
                 }
 
-                var tasksDTO = TaskDTOMappingExtensions.ToTaskDTOList(tasks);
+                var tasksDTO = _mapper.Map<TaskDTO>(tasks);
 
                 return Ok(tasksDTO);
             }
@@ -99,12 +101,12 @@ namespace TaskList.Controllers
                     return BadRequest();
                 }
 
-                var task = TaskDTOMappingExtensions.ToTask(taskDTO);
+                var task = _mapper.Map<Task>(taskDTO);
 
                 _unityOfWork.TaskRepository.Create(task);
                 _unityOfWork.Commit();
 
-                var newTaskDTO = TaskDTOMappingExtensions.ToTaskDTO(task);
+                var newTaskDTO = _mapper.Map<TaskDTO>(task);
 
                 return Ok(newTaskDTO);
             }
@@ -124,12 +126,12 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status400BadRequest, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhuma das tarefas cadastradas..."});
                 }
 
-                var task = TaskDTOMappingExtensions.ToTask(taskDTO);
+                var task = _mapper.Map<Task>(taskDTO);
 
                 _unityOfWork.TaskRepository.Update(task);
                 _unityOfWork.Commit();
 
-                var updateTaskDTO = TaskDTOMappingExtensions.ToTaskDTO(task);
+                var updateTaskDTO = _mapper.Map<TaskDTO>(task);
 
                 return Ok(updateTaskDTO);
             }
@@ -153,7 +155,7 @@ namespace TaskList.Controllers
                 var removedTask = _unityOfWork.TaskRepository.Delete(task);
                 _unityOfWork.Commit();
 
-                var removedTaskDTO = TaskDTOMappingExtensions.ToTaskDTO(task);
+                var removedTaskDTO = _mapper.Map<TaskDTO>(removedTask);
 
                 return Ok(removedTaskDTO);
             }
