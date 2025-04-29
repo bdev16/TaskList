@@ -7,6 +7,7 @@ using TaskList.DTOs;
 using TaskList.Model;
 using TaskList.Repositories;
 using TaskList.DTOs;
+using AutoMapper;
 
 namespace TaskList.Controllers
 {
@@ -15,14 +16,16 @@ namespace TaskList.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUnityOfWork _unityOfWork;
+        private readonly IMapper _mapper;
 
-        public UserController(IUnityOfWork unityOfWork)
+        public UserController(IUnityOfWork unityOfWork, IMapper mapper)
         {
             _unityOfWork = unityOfWork;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<User>> Get()
+        public ActionResult<IEnumerable<UserDTO>> Get()
         {
             try
             {
@@ -31,7 +34,10 @@ namespace TaskList.Controllers
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Nenhuma usuario foi criado até o momento..."});
                 }
-                return Ok(users);
+
+                var usersDTO = _mapper.Map<IEnumerable<UserDTO>>(users);
+
+                return Ok(usersDTO);
             }
             catch (Exception ex)
             {
@@ -40,7 +46,7 @@ namespace TaskList.Controllers
         }
 
         [HttpGet("{id}", Name = "GetUser")]
-        public ActionResult<User> Get(string id)
+        public ActionResult<UserDTO> Get(string id)
         {
             try
             {
@@ -49,7 +55,10 @@ namespace TaskList.Controllers
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhum dos usuarios cadastrados..."});
                 }
-                return Ok(user);
+
+                var userDTO = _mapper.Map<UserDTO>(user);
+
+                return Ok(userDTO);
             }
             catch (Exception ex)
             {
@@ -59,7 +68,7 @@ namespace TaskList.Controllers
 
         //[Authorize]
         [HttpGet("tasks")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUserTasks()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUserTasks()
         {
             try
             {
@@ -68,7 +77,10 @@ namespace TaskList.Controllers
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "" });
                 }
-                return Ok(userTasks);
+
+                var userTasksDTO = _mapper.Map<IEnumerable<UserDTO>>(userTasks);
+
+                return Ok(userTasksDTO);
             }
             catch (Exception ex)
             {
@@ -98,7 +110,7 @@ namespace TaskList.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult<User> Put(string id, UserUpdateDTO userUpdate)
+        public ActionResult<UserDTO> Put(string id, UserUpdateDTO userUpdateDTO)
         {
             try
             {
@@ -107,6 +119,8 @@ namespace TaskList.Controllers
                 {
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "O Id informado não corresponde a nenhum dos usuarios cadastrados..."});
                 }
+
+                var userUpdate = _mapper.Map<User>(userUpdateDTO);
 
                 if (!string.IsNullOrEmpty(userUpdate.UserName))
                     user.UserName = userUpdate.UserName;
@@ -117,7 +131,9 @@ namespace TaskList.Controllers
                 _unityOfWork.UserRepository.Update(user);
                 _unityOfWork.Commit();
 
-                return Ok(user);
+                var userDTO = _mapper.Map<UserUpdateDTO>(user);
+
+                return Ok(userDTO);
             }
             catch (Exception ex)
             {
@@ -137,10 +153,12 @@ namespace TaskList.Controllers
 
                 }
 
-                _unityOfWork.UserRepository.Delete(user);
+                var removedUser = _unityOfWork.UserRepository.Delete(user);
                 _unityOfWork.Commit();
 
-                return Ok(user);
+                var removedUserDTO = _mapper.Map<UserDTO>(removedUser);
+
+                return Ok(removedUserDTO);
             }
             catch (Exception ex)
             {
