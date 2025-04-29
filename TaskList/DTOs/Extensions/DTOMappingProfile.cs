@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Task = TaskList.Model.Task;
 
 
 namespace TaskList.DTOs.Extensions
