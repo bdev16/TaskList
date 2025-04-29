@@ -85,7 +85,7 @@ namespace TaskList.Controllers
 
             if (userExists != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "User alredy exists!" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "O Usuario informado já existe!" });
             }
 
             User user = new()
@@ -98,9 +98,16 @@ namespace TaskList.Controllers
 
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "User creation failed." });
+                var errors = result.Errors.Select(e => e.Description).ToList();
+
+                return BadRequest(new ResponseDTO
+                {
+                    Status = "Error",
+                    Message = "Erro ao criar usuário",
+                    Errors = errors
+                });
             }
-            return Ok(new ResponseDTO { Status = "Sucess", Message = "User created successfully!" });
+            return Ok(new ResponseDTO { Status = "Sucess", Message = "Usuario criado com Sucesso!" });
         }
 
         [HttpPost]
@@ -109,7 +116,7 @@ namespace TaskList.Controllers
         {
             if (tokenModel == null)
             {
-                return BadRequest("Invalid client request");
+                return BadRequest("Requisição do usuario invalida");
             }
 
             string? acessToken = tokenModel.AcessToken ?? throw new ArgumentNullException(nameof(tokenModel));
@@ -120,7 +127,7 @@ namespace TaskList.Controllers
 
             if (principal == null)
             {
-                return BadRequest("Invalid acess token/refresh token");
+                return BadRequest("Acesso invalido token/refresh token");
             }
 
             string username = principal.Identity.Name;
@@ -129,7 +136,7 @@ namespace TaskList.Controllers
 
             if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
             {
-                return BadRequest("Invalid access token/refresh token");
+                return BadRequest("Acesso invalido token/refresh token");
             }
 
             var newAccessToken = _tokenService.GenerateAccessToken(principal.Claims.ToList(), _configuration);
@@ -153,7 +160,7 @@ namespace TaskList.Controllers
         {
             var user = await _userManager.FindByIdAsync(username);
 
-            if (user == null) return BadRequest("Invalid user name");
+            if (user == null) return BadRequest("UserName invalido");
 
             user.RefreshToken = null;
 
