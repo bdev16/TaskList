@@ -9,7 +9,6 @@ using TaskList.DTOs;
 using TaskList.DTOs.Extensions;
 using TaskList.Model;
 using TaskList.Repositories;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Task = TaskList.Model.Task;
 using AutoMapper;
 
@@ -21,9 +20,10 @@ namespace TaskList.Controllers
     {
         private readonly IUnityOfWork _unityOfWork;
         private readonly IMapper _mapper;
-        public TaskController(IUnityOfWork unityOfWork)
+        public TaskController(IUnityOfWork unityOfWork, IMapper mapper)
         {
             _unityOfWork = unityOfWork;
+            _mapper = mapper;
         }
 
         //[Authorize]
@@ -38,7 +38,7 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Nenhuma tarefa foi criada até o momento..."});
                 }
 
-                var tasksDTO = _mapper.Map<TaskDTO>(tasks);
+                var tasksDTO = _mapper.Map<IEnumerable<TaskDTO>>(tasks);
 
                 return Ok(tasksDTO);
             }
@@ -70,7 +70,7 @@ namespace TaskList.Controllers
         }
 
         [HttpGet("{id},{date}", Name = "GetTasksForDate")]
-        public ActionResult<TaskDTO> GetTasksForDate(string id, string date)
+        public ActionResult<IEnumerable<TaskDTO>> GetTasksForDate(string id, string date)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace TaskList.Controllers
                     return StatusCode(StatusCodes.Status404NotFound, new ResponseDTO { Status = "Error", Message = "Não existe nenhum tarefa cadastrada com a data informada..."});
                 }
 
-                var tasksDTO = _mapper.Map<TaskDTO>(tasks);
+                var tasksDTO = _mapper.Map<IEnumerable<TaskDTO>>(tasks);
 
                 return Ok(tasksDTO);
             }
