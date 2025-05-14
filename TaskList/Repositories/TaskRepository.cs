@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskList.Data;
+using TaskList.Pagination;
 using Task = TaskList.Model.Task;
 
 
@@ -9,6 +10,14 @@ namespace TaskList.Repositories
     {
         public TaskRepository(AppDbContext context) : base(context)
         {
+        }
+
+        public IEnumerable<Task> GetTasks(TasksParameters tasksParameters)
+        {
+            return GetAll()
+                .OrderBy(task => task.Title)
+                .Skip((tasksParameters.PageNumber - 1) * tasksParameters.PageSize)
+                .Take(tasksParameters.PageSize).ToList();
         }
 
         public IEnumerable<Task> GetTasksForDate(string id, string date)
