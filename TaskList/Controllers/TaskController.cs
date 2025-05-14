@@ -11,6 +11,7 @@ using TaskList.Model;
 using TaskList.Repositories;
 using Task = TaskList.Model.Task;
 using AutoMapper;
+using TaskList.Pagination;
 
 namespace TaskList.Controllers
 {
@@ -89,6 +90,16 @@ namespace TaskList.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDTO { Status = "Error", Message = "Ocorreu um erro ao tentar tratar a sua solicitação..."});
             }
+        }
+
+        [HttpGet("pagination")]
+        public ActionResult<IEnumerable<TaskDTO>> Get([FromQuery] TasksParameters tasksParameters)
+        {
+            var tasks = _unityOfWork.TaskRepository.GetTasks(tasksParameters);
+
+            var tasksDto = _mapper.Map<IEnumerable<TaskDTO>>(tasks);
+
+            return Ok(tasksDto);
         }
 
         [HttpPost]
