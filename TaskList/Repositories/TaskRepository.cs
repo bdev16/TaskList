@@ -11,13 +11,11 @@ namespace TaskList.Repositories
         public TaskRepository(AppDbContext context) : base(context)
         {
         }
-
-        public IEnumerable<Task> GetTasks(TasksParameters tasksParameters)
+        public PagedList<Task> GetTasks(TasksParameters tasksParameters)
         {
-            return GetAll()
-                .OrderBy(task => task.Title)
-                .Skip((tasksParameters.PageNumber - 1) * tasksParameters.PageSize)
-                .Take(tasksParameters.PageSize).ToList();
+            var tasks = GetAll().OrderBy(task => task.Id).AsQueryable();
+            var orderedTasks = PagedList<Task>.ToPagedList(tasks, tasksParameters.PageNumber, tasksParameters.PageSize);
+            return orderedTasks;
         }
 
         public IEnumerable<Task> GetTasksForDate(string id, string date)
