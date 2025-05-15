@@ -6,7 +6,7 @@ namespace TaskList.Repositories
 {
     public interface ITaskRepository : IRepository<Task>  
     {
-        IEnumerable<Task> GetTasks(TasksParameters tasksParameters);
+        PagedList<Task> GetTasks(TasksParameters tasksParameters);
         IEnumerable<Task> GetTasksForDate(string id, string date);
     }
 }
