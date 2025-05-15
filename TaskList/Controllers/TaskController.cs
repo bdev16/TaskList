@@ -12,6 +12,7 @@ using TaskList.Repositories;
 using Task = TaskList.Model.Task;
 using AutoMapper;
 using TaskList.Pagination;
+using Newtonsoft.Json;
 
 namespace TaskList.Controllers
 {
@@ -97,6 +98,18 @@ namespace TaskList.Controllers
         {
             var tasks = _unityOfWork.TaskRepository.GetTasks(tasksParameters);
 
+            var metadata = new
+            {
+                tasks.TotalCount,
+                tasks.PageSize,
+                tasks.CurrentPage,
+                tasks.TotalPages,
+                tasks.HasNext,
+                tasks.HasPrevious,
+            };
+
+            Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
+            
             var tasksDto = _mapper.Map<IEnumerable<TaskDTO>>(tasks);
 
             return Ok(tasksDto);
