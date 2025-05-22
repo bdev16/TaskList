@@ -98,6 +98,24 @@ namespace TaskList.Controllers
         {
             var tasks = _unityOfWork.TaskRepository.GetTasks(tasksParameters);
 
+            return GetTasksWithPagination(tasks);
+        }
+
+        [HttpGet("filter/title/pagination")]
+        public ActionResult<IEnumerable<TaskDTO>> GetFilteredTasksByTitle([FromQuery] TasksTitleFilter tasksTitleFilter)
+        {
+            var tasks = _unityOfWork.TaskRepository.GetTasksTitleFilter(tasksTitleFilter);
+            return GetTasksWithPagination(tasks);
+        }
+
+        [HttpGet("filter/status/pagination")]
+        public ActionResult<IEnumerable<TaskDTO>> GetFilteredTasksByStatus([FromQuery] TasksStatusFilter tasksStatusFilter)
+        {
+            var tasks = _unityOfWork.TaskRepository.GetTasksStatusFilter(tasksStatusFilter);
+            return GetTasksWithPagination(tasks);
+        }
+        private ActionResult<IEnumerable<TaskDTO>> GetTasksWithPagination(PagedList<Task> tasks)
+        {
             var metadata = new
             {
                 tasks.TotalCount,
@@ -109,7 +127,7 @@ namespace TaskList.Controllers
             };
 
             Response.Headers.Append("X-Pagination", JsonConvert.SerializeObject(metadata));
-            
+
             var tasksDto = _mapper.Map<IEnumerable<TaskDTO>>(tasks);
 
             return Ok(tasksDto);
